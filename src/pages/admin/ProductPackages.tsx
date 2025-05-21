@@ -72,61 +72,87 @@ const ProductPackages = () => {
     setLoading(true);
     
     try {
-      // Get all packages
+      // Get all packages with calculated prices from the database
       const { data, error } = await supabase
-        .from('product_packages')
-        .select('*')
+        .rpc('get_packages_with_prices')
         .order('name');
       
-      if (error) throw error;
-      
-      if (data) {
-        // For each package, get its items
-        const packagesWithItems = await Promise.all(data.map(async (pkg) => {
-          // Get items for this package
-          const { data: itemsData, error: itemsError } = await supabase
-            .from('product_package_items')
-            .select(`
-              id,
-              product_id,
-              quantity,
-              products(id, name, price)
-            `)
-            .eq('package_id', pkg.id);
-          
-          if (itemsError) {
-            console.error('Error fetching items for package', pkg.id, itemsError);
-            return { ...pkg, items: [] };
-          }
-          
-          // Transform items data
-          const items = itemsData ? itemsData.map((item: any) => ({
-            id: item.id,
-            product_id: item.product_id,
-            product_name: item.products?.name || 'Unknown Product',
-            product_price: item.products?.price || 0,
-            quantity: item.quantity
-          })) : [];
-          
-          // Calculate total price based on items
-          const totalPrice = items.reduce((sum, item) => 
-            sum + (item.product_price * item.quantity), 0);
-          
-          return {
-            ...pkg,
-            items,
-            price: pkg.price || totalPrice,
-            discounted_price: pkg.discounted_price || (totalPrice * (1 - pkg.discount_percentage / 100))
-          };
-        }));
+      if (error) {
+        console.error('Error fetching packages with prices:', error);
         
-        setPackages(packagesWithItems);
+        // Fallback to regular query if RPC fails
+        const { data: packagesData, error: packagesError } = await supabase
+          .from('product_packages')
+          .select('*')
+          .order('name');
+        
+        if (packagesError) throw packagesError;
+        
+        if (packagesData) {
+          await processPackages(packagesData);
+        }
+      } else if (data) {
+        // Data already includes calculated prices from the database
+        await processPackages(data);
       }
     } catch (error) {
       console.error('Error fetching packages:', error);
       toast.error('Failed to load packages');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Process packages and fetch their items
+  const processPackages = async (packagesData) => {
+    try {
+      // For each package, get its items
+      const packagesWithItems = await Promise.all(packagesData.map(async (pkg) => {
+        // Get items for this package
+        const { data: itemsData, error: itemsError } = await supabase
+          .from('product_package_items')
+          .select(`
+            id,
+            product_id,
+            quantity,
+            products(id, name, price)
+          `)
+          .eq('package_id', pkg.id);
+        
+        if (itemsError) {
+          console.error('Error fetching items for package', pkg.id, itemsError);
+          return { ...pkg, items: [] };
+        }
+        
+        // Transform items data
+        const items = itemsData ? itemsData.map((item: any) => ({
+          id: item.id,
+          product_id: item.product_id,
+          product_name: item.products?.name || 'Unknown Product',
+          product_price: item.products?.price || 0,
+          quantity: item.quantity
+        })) : [];
+        
+        // Use database calculated price if available, otherwise calculate on frontend
+        const totalPrice = pkg.calculated_price || items.reduce((sum, item) => 
+          sum + (item.product_price * item.quantity), 0);
+        
+        // Use database calculated discounted price if available
+        const discountedPrice = pkg.calculated_discounted_price || 
+          (totalPrice * (1 - (pkg.discount_percentage || 0) / 100));
+        
+        return {
+          ...pkg,
+          items,
+          price: pkg.price || totalPrice,
+          discounted_price: pkg.discounted_price || discountedPrice
+        };
+      }));
+      
+      setPackages(packagesWithItems);
+    } catch (error) {
+      console.error('Error processing packages:', error);
+      throw error;
     }
   };
 

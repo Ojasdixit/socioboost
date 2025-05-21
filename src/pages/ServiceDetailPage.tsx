@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
@@ -6,206 +6,17 @@ import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { toast } from 'sonner';
 import { serviceDetailData } from '@/utils/serviceDetailData';
+import { supabase } from '@/lib/supabase';
 
-// Static package data for each service type
-const staticPackages = {
-  'youtube-subscribers': [
-    {
-      id: 'yt-sub-1',
-      name: 'YouTube 500 Subscribers',
-      description: 'Get 500 high-quality YouTube subscribers to boost your channel credibility.',
-      price: 29.99,
-      discounted_price: 24.99,
-      is_featured: true
-    },
-    {
-      id: 'yt-sub-2',
-      name: 'YouTube 1000 Subscribers',
-      description: 'Grow your channel with 1000 real YouTube subscribers.',
-      price: 49.99,
-      discounted_price: null,
-      is_featured: false
-    },
-    {
-      id: 'yt-sub-3',
-      name: 'YouTube 2500 Subscribers',
-      description: 'Premium package with 2500 subscribers for serious content creators.',
-      price: 99.99,
-      discounted_price: 89.99,
-      is_featured: true
-    }
-  ],
-  'youtube-views': [
-    {
-      id: 'yt-views-1',
-      name: 'YouTube 1000 Views',
-      description: 'Get 1000 high-retention views for your YouTube videos.',
-      price: 9.99,
-      discounted_price: null,
-      is_featured: false
-    },
-    {
-      id: 'yt-views-2',
-      name: 'YouTube 5000 Views',
-      description: 'Boost your video performance with 5000 high-quality views.',
-      price: 29.99,
-      discounted_price: 24.99,
-      is_featured: true
-    },
-    {
-      id: 'yt-views-3',
-      name: 'YouTube 10000 Views',
-      description: 'Get your content noticed with 10000 views across your videos.',
-      price: 49.99,
-      discounted_price: 39.99,
-      is_featured: false
-    }
-  ],
-  'instagram-followers': [
-    {
-      id: 'ig-fol-1',
-      name: 'Instagram 1000 Followers',
-      description: 'Grow your Instagram presence with 1000 followers.',
-      price: 19.99,
-      discounted_price: null,
-      is_featured: false
-    },
-    {
-      id: 'ig-fol-2',
-      name: 'Instagram 2500 Followers',
-      description: 'Medium package with 2500 Instagram followers.',
-      price: 39.99,
-      discounted_price: 34.99,
-      is_featured: true
-    },
-    {
-      id: 'ig-fol-3',
-      name: 'Instagram 5000 Followers',
-      description: 'Premium package with 5000 followers for serious influencers.',
-      price: 69.99,
-      discounted_price: 59.99,
-      is_featured: false
-    }
-  ],
-  'instagram-likes': [
-    {
-      id: 'ig-likes-1',
-      name: 'Instagram 500 Likes',
-      description: '500 likes spread across your recent posts.',
-      price: 9.99,
-      discounted_price: null,
-      is_featured: false
-    },
-    {
-      id: 'ig-likes-2',
-      name: 'Instagram 1000 Likes',
-      description: '1000 likes to boost your engagement rate.',
-      price: 17.99,
-      discounted_price: 14.99,
-      is_featured: true
-    }
-  ],
-  'facebook-followers': [
-    {
-      id: 'fb-fol-1',
-      name: 'Facebook 1000 Followers',
-      description: 'Grow your Facebook page with 1000 followers.',
-      price: 19.99,
-      discounted_price: null,
-      is_featured: false
-    },
-    {
-      id: 'fb-fol-2',
-      name: 'Facebook 2500 Followers',
-      description: 'Medium package with 2500 Facebook followers.',
-      price: 39.99,
-      discounted_price: 34.99,
-      is_featured: true
-    }
-  ],
-  'twitter-followers': [
-    {
-      id: 'tw-fol-1',
-      name: 'Twitter 1000 Followers',
-      description: 'Grow your Twitter profile with 1000 followers.',
-      price: 19.99,
-      discounted_price: null,
-      is_featured: false
-    },
-    {
-      id: 'tw-fol-2',
-      name: 'Twitter 2500 Followers',
-      description: 'Medium package with 2500 Twitter followers.',
-      price: 39.99,
-      discounted_price: 34.99,
-      is_featured: true
-    }
-  ],
-  'google-positive': [
-    {
-      id: 'gr-pos-1',
-      name: 'Google 10 Positive Reviews',
-      description: 'Boost your business with 10 positive Google reviews.',
-      price: 49.99,
-      discounted_price: 39.99,
-      is_featured: true
-    },
-    {
-      id: 'gr-pos-2',
-      name: 'Google 25 Positive Reviews',
-      description: 'Comprehensive package with 25 detailed positive reviews.',
-      price: 99.99,
-      discounted_price: null,
-      is_featured: false
-    }
-  ],
-  'trustpilot-paid-reviews': [
-    {
-      id: 'tp-rev-1',
-      name: 'Trustpilot 10 Reviews',
-      description: 'Enhance your business reputation with 10 positive Trustpilot reviews.',
-      price: 59.99,
-      discounted_price: 49.99,
-      is_featured: true
-    },
-    {
-      id: 'tp-rev-2',
-      name: 'Trustpilot 25 Reviews',
-      description: 'Premium package with 25 detailed Trustpilot reviews.',
-      price: 119.99,
-      discounted_price: null,
-      is_featured: false
-    }
-  ]
-};
-
-// Default packages for any service type not explicitly defined
-const defaultPackages = [
-  {
-    id: 'default-1',
-    name: 'Basic Package',
-    description: 'Entry-level package to boost your social media presence.',
-    price: 19.99,
-    discounted_price: null,
-    is_featured: false
-  },
-  {
-    id: 'default-2',
-    name: 'Standard Package',
-    description: 'Our most popular package with great value for money.',
-    price: 39.99,
-    discounted_price: 34.99,
-    is_featured: true
-  },
-  {
-    id: 'default-3',
-    name: 'Premium Package',
-    description: 'Advanced package for professional social media growth.',
-    price: 79.99,
-    discounted_price: 69.99,
-    is_featured: false
-  }
-];
+// Interface for package data
+interface PackageData {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  discounted_price: number | null;
+  is_featured: boolean;
+}
 
 const ServiceDetailPage = () => {
   const location = useLocation();
@@ -213,6 +24,8 @@ const ServiceDetailPage = () => {
   const { addToCart } = useCart();
   const { formatCurrency } = useCurrency();
   const [quantity, setQuantity] = useState(1);
+  const [packages, setPackages] = useState<PackageData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Get service type and ID from URL path
   const pathParts = location.pathname.split('/').filter(Boolean);
@@ -223,10 +36,6 @@ const ServiceDetailPage = () => {
   const standardizedServiceType = serviceType === 'google' ? 'google-reviews' : serviceType;
   const serviceKey = `${standardizedServiceType}-${serviceId}`;
   const serviceData = serviceDetailData[serviceKey];
-
-  // Get packages for this service type and ID
-  const servicePackageKey = `${serviceType}-${serviceId}`;
-  const packages = staticPackages[servicePackageKey] || defaultPackages;
 
   useEffect(() => {
     // Set page metadata
@@ -242,7 +51,113 @@ const ServiceDetailPage = () => {
         document.head.appendChild(metaTag);
       }
     }
-  }, [serviceData]);
+    
+    // Fetch packages from the database
+    fetchPackages();
+  }, [serviceData, serviceType, serviceId]);
+
+  // Fetch packages from the database
+  const fetchPackages = async () => {
+    setLoading(true);
+    try {
+      // Try to get packages specific to this service type
+      const { data: servicePackages, error: serviceError } = await supabase
+        .from('product_packages')
+        .select('*')
+        .eq('service_type', serviceType)
+        .eq('service_id', serviceId)
+        .order('price');
+      
+      if (serviceError) {
+        console.error('Error fetching service packages:', serviceError);
+      }
+      
+      // If we found service-specific packages, use those
+      if (servicePackages && servicePackages.length > 0) {
+        // Get calculated prices for these packages
+        const packagesWithPrices = await getPackagePrices(servicePackages);
+        setPackages(packagesWithPrices);
+      } else {
+        // Otherwise, get featured packages
+        const { data: featuredPackages, error: featuredError } = await supabase
+          .from('product_packages')
+          .select('*')
+          .eq('is_featured', true)
+          .order('price')
+          .limit(3);
+        
+        if (featuredError) {
+          console.error('Error fetching featured packages:', featuredError);
+        }
+        
+        if (featuredPackages && featuredPackages.length > 0) {
+          // Get calculated prices for these packages
+          const packagesWithPrices = await getPackagePrices(featuredPackages);
+          setPackages(packagesWithPrices);
+        } else {
+          // Last resort: get any packages
+          const { data: anyPackages, error: anyError } = await supabase
+            .from('product_packages')
+            .select('*')
+            .order('price')
+            .limit(3);
+          
+          if (anyError) {
+            console.error('Error fetching any packages:', anyError);
+          }
+          
+          if (anyPackages && anyPackages.length > 0) {
+            // Get calculated prices for these packages
+            const packagesWithPrices = await getPackagePrices(anyPackages);
+            setPackages(packagesWithPrices);
+          } else {
+            // If all else fails, use default packages
+            setPackages(defaultPackages);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching packages:', error);
+      // Fallback to default packages
+      setPackages(defaultPackages);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get calculated prices for packages
+  const getPackagePrices = async (packagesList) => {
+    try {
+      // Use the database function to calculate prices if possible
+      const { data: pricesData, error: pricesError } = await supabase
+        .rpc('get_packages_with_prices');
+      
+      if (pricesError || !pricesData) {
+        console.error('Error getting package prices:', pricesError);
+        // Fallback: Calculate prices manually
+        return packagesList.map(pkg => {
+          return {
+            ...pkg,
+            price: pkg.price || 0,
+            discounted_price: pkg.discounted_price || (pkg.price * (1 - (pkg.discount_percentage || 0) / 100))
+          };
+        });
+      }
+      
+      // Match prices with packages
+      return packagesList.map(pkg => {
+        const priceData = pricesData.find(p => p.id === pkg.id);
+        return {
+          ...pkg,
+          price: priceData?.calculated_price || pkg.price || 0,
+          discounted_price: priceData?.calculated_discounted_price || pkg.discounted_price || null
+        };
+      });
+    } catch (error) {
+      console.error('Error processing package prices:', error);
+      return packagesList;
+    }
+  };
 
   const handleAddToCart = (pkg) => {
     addToCart({
@@ -269,6 +184,34 @@ const ServiceDetailPage = () => {
     );
   }
 
+  // Default packages for fallback
+  const defaultPackages = [
+    {
+      id: 'default-1',
+      name: 'Basic Package',
+      description: 'Entry-level package to boost your social media presence.',
+      price: 19.99,
+      discounted_price: null,
+      is_featured: false
+    },
+    {
+      id: 'default-2',
+      name: 'Standard Package',
+      description: 'Our most popular package with great value for money.',
+      price: 39.99,
+      discounted_price: 34.99,
+      is_featured: true
+    },
+    {
+      id: 'default-3',
+      name: 'Premium Package',
+      description: 'Advanced package for professional social media growth.',
+      price: 79.99,
+      discounted_price: 69.99,
+      is_featured: false
+    }
+  ];
+
   return (
     <Layout>
       <div className="container-custom section-padding">
@@ -282,33 +225,40 @@ const ServiceDetailPage = () => {
               <p className="text-gray-600">{serviceData.longDescription}</p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
-              {packages.map((pkg) => (
-                <div key={pkg.id} className={`border rounded-lg p-6 hover:shadow-md transition-shadow ${pkg.is_featured ? 'border-brand-blue' : ''}`}>
-                  <h3 className="font-bold text-xl mb-2">{pkg.name}</h3>
-                  <p className="text-gray-600 mb-4">{pkg.description}</p>
-                  <div className="flex items-center justify-between mb-4">
-                    {pkg.discounted_price ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-brand-blue">{formatCurrency(pkg.discounted_price)}</span>
-                        <span className="text-gray-500 line-through">{formatCurrency(pkg.price)}</span>
-                      </div>
-                    ) : (
-                      <span className="text-2xl font-bold text-brand-blue">{formatCurrency(pkg.price)}</span>
-                    )}
-                    {pkg.is_featured && (
-                      <span className="text-sm bg-brand-pink text-white py-1 px-2 rounded-full">Featured</span>
-                    )}
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin h-8 w-8 border-4 border-brand-blue border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p>Loading packages...</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-3">
+                {packages.map((pkg) => (
+                  <div key={pkg.id} className={`border rounded-lg p-6 hover:shadow-md transition-shadow ${pkg.is_featured ? 'border-brand-blue' : ''}`}>
+                    <h3 className="font-bold text-xl mb-2">{pkg.name}</h3>
+                    <p className="text-gray-600 mb-4">{pkg.description}</p>
+                    <div className="flex items-center justify-between mb-4">
+                      {pkg.discounted_price ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl font-bold text-brand-blue">{formatCurrency(pkg.discounted_price)}</span>
+                          <span className="text-gray-500 line-through">{formatCurrency(pkg.price)}</span>
+                        </div>
+                      ) : (
+                        <span className="text-2xl font-bold text-brand-blue">{formatCurrency(pkg.price)}</span>
+                      )}
+                      {pkg.is_featured && (
+                        <span className="text-sm bg-brand-pink text-white py-1 px-2 rounded-full">Featured</span>
+                      )}
+                    </div>
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handleAddToCart(pkg)}
+                    >
+                      Add to Cart
+                    </Button>
                   </div>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handleAddToCart(pkg)}
-                  >
-                    Add to Cart
-                  </Button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
 
             {/* Service Benefits */}
             <div className="bg-white rounded-lg shadow-sm p-8">
