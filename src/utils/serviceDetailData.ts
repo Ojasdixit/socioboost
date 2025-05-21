@@ -1019,6 +1019,144 @@ export const serviceDetailData: Record<string, ServiceData> = {
       }
     ]
   },
+  'google-positive': {
+    title: 'Positive Google Reviews',
+    description: 'Boost your business reputation with authentic Google reviews.',
+    longDescription: 'Our Google Reviews service helps businesses build trust and credibility through authentic, positive reviews from verified users. Improve your local SEO ranking and attract more customers with a strong online presence.',
+    products: [
+      {
+        id: 'google-reviews-5',
+        name: 'Starter Pack',
+        description: 'For new businesses',
+        price: 199.99,
+        delivery: '3-4 days',
+        features: [
+          '5 Verified Reviews',
+          'Real Google Accounts',
+          'Custom Review Content',
+          'Lifetime Guarantee',
+          '24/7 Support'
+        ]
+      },
+      {
+        id: 'google-reviews-10',
+        name: 'Popular Pack',
+        description: 'Most popular choice',
+        price: 349.99,
+        discountedPrice: 299.99,
+        delivery: '4-5 days',
+        features: [
+          '10 Verified Reviews',
+          'Real Google Accounts',
+          'Custom Review Content',
+          'Lifetime Guarantee',
+          '24/7 Support',
+          'Priority Delivery'
+        ],
+        popular: true
+      },
+      {
+        id: 'google-reviews-20',
+        name: 'Premium Pack',
+        description: 'Maximum impact',
+        price: 599.99,
+        discountedPrice: 499.99,
+        delivery: '5-7 days',
+        features: [
+          '20 Verified Reviews',
+          'Real Google Accounts',
+          'Custom Review Content',
+          'Lifetime Guarantee',
+          '24/7 Support',
+          'Priority Delivery',
+          'Review Management'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: 'Are these real Google reviews?',
+        answer: 'Yes, all reviews come from verified Google accounts with authentic histories. We never use fake accounts or bots.'
+      },
+      {
+        question: 'Can I customize the review content?',
+        answer: 'Yes, you can provide guidelines or specific points you want mentioned in the reviews. We ensure they sound natural and authentic.'
+      },
+      {
+        question: 'How long do the reviews stay on my profile?',
+        answer: 'All reviews are permanent and will stay on your Google Business Profile as long as they comply with Google\'s guidelines.'
+      }
+    ]
+  },
+  'google-reputation': {
+    title: 'Google Reputation Management',
+    description: 'Comprehensive reputation management for your Google Business Profile.',
+    longDescription: 'Our Google Reputation Management service helps businesses maintain a positive online presence by managing and responding to reviews, improving ratings, and enhancing overall visibility.',
+    products: [
+      {
+        id: 'google-rep-basic',
+        name: 'Basic Management',
+        description: 'For small businesses',
+        price: 299.99,
+        delivery: 'Ongoing',
+        features: [
+          'Monthly Review Monitoring',
+          'Response to All Reviews',
+          'Rating Improvement Plan',
+          'Basic Analytics Report',
+          'Email Support'
+        ]
+      },
+      {
+        id: 'google-rep-pro',
+        name: 'Professional Management',
+        description: 'Most popular choice',
+        price: 499.99,
+        discountedPrice: 449.99,
+        delivery: 'Ongoing',
+        features: [
+          'Weekly Review Monitoring',
+          'Response to All Reviews',
+          'Rating Improvement Plan',
+          'Detailed Analytics Report',
+          'Priority Support',
+          'Review Generation Strategy'
+        ],
+        popular: true
+      },
+      {
+        id: 'google-rep-premium',
+        name: 'Premium Management',
+        description: 'Complete reputation solution',
+        price: 799.99,
+        discountedPrice: 699.99,
+        delivery: 'Ongoing',
+        features: [
+          'Daily Review Monitoring',
+          'Response to All Reviews',
+          'Rating Improvement Plan',
+          'Advanced Analytics Report',
+          '24/7 Priority Support',
+          'Review Generation Strategy',
+          'Crisis Management'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        question: 'How do you improve my Google rating?',
+        answer: 'We implement a comprehensive strategy including encouraging satisfied customers to leave reviews, responding to all reviews professionally, and addressing any negative feedback promptly.'
+      },
+      {
+        question: 'What happens if I receive a negative review?',
+        answer: 'Our team will immediately notify you and help craft a professional response. We also work to generate more positive reviews to balance your overall rating.'
+      },
+      {
+        question: 'How often will I receive reports?',
+        answer: 'Report frequency depends on your package. Basic plans receive monthly reports, while premium plans include weekly or daily updates on your reputation metrics.'
+      }
+    ]
+  },
   'trustpilot-paid-reviews': {
     title: 'Trustpilot Paid Reviews',
     description: 'Get authentic Trustpilot reviews to build trust.',

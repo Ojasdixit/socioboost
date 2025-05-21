@@ -1,4 +1,3 @@
-
 interface ServiceOption {
   id: string;
   name: string;
@@ -50,6 +49,44 @@ export const defaultServices: Record<string, ServicePageProps> = {
         price: 99,
         delivery: 'Ongoing service',
         detailPage: '/services/google-reviews/reputation'
+      }
+    ]
+  },
+  'google': {
+    title: 'Google Reviews Services',
+    description: 'Boost your business credibility with positive Google Reviews. Our services help you improve your online reputation and increase customer trust.',
+    options: [
+      {
+        id: 'google-basic',
+        name: '10 Positive Google Reviews',
+        description: 'Get 10 high-quality positive reviews from real users.',
+        price: 9,
+        delivery: '3-5 days',
+        detailPage: '/services/google/positive'
+      },
+      {
+        id: 'google-standard',
+        name: '25 Positive Google Reviews',
+        description: 'Build your reputation faster with 25 high-quality reviews.',
+        price: 21,
+        delivery: '5-7 days',
+        detailPage: '/services/google/positive'
+      },
+      {
+        id: 'google-premium',
+        name: '50 Positive Google Reviews',
+        description: 'Comprehensive reputation boost with 50 authentic positive reviews.',
+        price: 39,
+        delivery: '7-10 days',
+        detailPage: '/services/google/positive'
+      },
+      {
+        id: 'google-reputation',
+        name: 'Reputation Management',
+        description: 'Complete reputation management service including review monitoring and response management.',
+        price: 99,
+        delivery: 'Ongoing service',
+        detailPage: '/services/google/reputation'
       }
     ]
   },
