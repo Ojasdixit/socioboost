@@ -22,7 +22,6 @@ import {
 import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { v4 as uuidv4 } from 'uuid';
 
 interface BlogPost {
   id: string;
@@ -37,33 +36,73 @@ interface BlogPost {
   image_url?: string;
   created_at?: string;
   updated_at?: string;
+  category?: string;
 }
 
 const createTestBlogPost = async () => {
   try {
-    const { data, error } = await supabase
+    const now = new Date().toISOString();
+    // Direct insert approach - bare minimum fields
+    const { error } = await supabase
       .from('blog_posts')
       .insert({
-        title: 'Test Blog Post',
+        title: 'Test Blog Post ' + Date.now(),
         slug: 'test-blog-post-' + Date.now(),
         content: 'This is a test blog post content.',
         excerpt: 'This is a test excerpt.',
         status: 'draft',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .select();
+        category: 'Test Category',
+        author_id: 'admin',
+        created_at: now,
+        updated_at: now
+      });
       
     if (error) {
       console.error('Error creating test blog post:', error);
       return false;
     }
     
-    console.log('Test blog post created:', data);
     return true;
   } catch (error) {
     console.error('Exception creating test blog post:', error);
     return false;
+  }
+};
+
+// Function to create a blog post through direct API call
+const createBlogPostDirect = async (blogData: {
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string;
+  status: string;
+  category?: string;
+  image_url?: string | null;
+  author_id?: string;
+  published_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}) => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_SUPABASE_URL || 'https://tdyyeygvfojnebppxyug.supabase.co'}/rest/v1/blog_posts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkeXlleWd2Zm9qbmVicHB4eXVnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc4MTUzOTMsImV4cCI6MjA2MzM5MTM5M30.yxmHcp5mAyHj5lGbCBN7mBrnVPcfHDkSJvd4-G3EoD4',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(blogData)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create blog post: ${response.status} ${errorText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error in direct API call:', error);
+    throw error;
   }
 };
 
@@ -81,6 +120,7 @@ const Blogs = () => {
     author_id: localStorage.getItem('adminUser') || '',
     status: 'draft',
     image_url: '',
+    category: 'Uncategorized',
   });
 
   useEffect(() => {
@@ -128,22 +168,22 @@ const Blogs = () => {
     setLoading(true);
 
     try {
+      // MINIMAL APPROACH: Use the simplest possible method to create/update a blog post
+      console.log('Saving blog post with minimal approach...');
+      
       const now = new Date().toISOString();
-      const postData = {
-        title: postForm.title,
-        slug: postForm.slug,
-        content: postForm.content,
-        excerpt: postForm.excerpt,
-        status: postForm.status,
-        image_url: postForm.image_url || null,
-        updated_at: now
-      };
       
       if (editingPost) {
-        // Update existing post
+        // Update existing post with minimal fields
         const { error } = await supabase
           .from('blog_posts')
-          .update(postData)
+          .update({
+            title: postForm.title,
+            slug: postForm.slug,
+            content: postForm.content,
+            excerpt: postForm.excerpt,
+            updated_at: now
+          })
           .eq('id', editingPost.id);
         
         if (error) {
@@ -153,16 +193,17 @@ const Blogs = () => {
         
         toast.success('Blog post updated successfully!');
       } else {
-        // Add new post
-        const newPostId = uuidv4();
-        
+        // Create new post with minimal required fields
         const { error } = await supabase
           .from('blog_posts')
           .insert({
-            ...postData,
-            id: newPostId,
-            published_at: postForm.status === 'published' ? now : null,
+            title: postForm.title,
+            slug: postForm.slug,
+            content: postForm.content,
+            excerpt: postForm.excerpt,
+            status: 'draft',
             created_at: now,
+            updated_at: now
           });
         
         if (error) {
@@ -170,7 +211,7 @@ const Blogs = () => {
           throw error;
         }
         
-        toast.success('Blog post added successfully!');
+        toast.success('Blog post created successfully!');
       }
 
       // Reset form
@@ -182,6 +223,7 @@ const Blogs = () => {
         author_id: localStorage.getItem('adminUser') || '',
         status: 'draft',
         image_url: '',
+        category: 'Uncategorized',
       });
       setEditingPost(null);
       
@@ -205,6 +247,7 @@ const Blogs = () => {
       author_id: post.author_id,
       status: post.status,
       image_url: post.image_url || '',
+      category: post.category || 'Uncategorized',
     });
     setIsDialogOpen(true);
   };
@@ -294,6 +337,74 @@ const Blogs = () => {
             }}
           >
             Check Table
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="bg-red-100 hover:bg-red-200"
+            onClick={async () => {
+              try {
+                const now = new Date().toISOString();
+                // Try raw SQL insert
+                const { data, error } = await supabase.rpc('create_blog_post', {
+                  title_param: 'Direct SQL Test Post ' + Date.now(),
+                  slug_param: 'direct-sql-test-' + Date.now(),
+                  content_param: 'This is a direct SQL test.',
+                  excerpt_param: 'Direct SQL excerpt',
+                  status_param: 'draft',
+                  category_param: 'SQL Test',
+                  author_id_param: 'admin',
+                  created_at_param: now
+                });
+                
+                if (error) {
+                  console.error('Direct SQL insert error:', error);
+                  toast.error('Direct SQL insert failed: ' + error.message);
+                } else {
+                  console.log('Direct SQL insert result:', data);
+                  toast.success('Direct SQL insert successful!');
+                  fetchBlogPosts();
+                }
+              } catch (error) {
+                console.error('Exception in direct SQL insert:', error);
+                toast.error('Exception in direct SQL insert');
+              }
+            }}
+          >
+            Direct SQL Insert
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="bg-purple-100 hover:bg-purple-200"
+            onClick={async () => {
+              try {
+                // Simplest possible approach - raw SQL query
+                const { data, error } = await supabase.from('blog_posts').insert({
+                  title: 'Super Simple Test ' + Date.now(),
+                  slug: 'super-simple-test-' + Date.now(),
+                  content: 'This is a super simple test.',
+                  excerpt: 'Super simple excerpt',
+                  status: 'draft',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+                
+                if (error) {
+                  console.error('Super simple insert error:', error);
+                  toast.error('Super simple insert failed: ' + error.message);
+                } else {
+                  console.log('Super simple insert result:', data);
+                  toast.success('Super simple insert successful!');
+                  fetchBlogPosts();
+                }
+              } catch (error) {
+                console.error('Exception in super simple insert:', error);
+                toast.error('Exception in super simple insert');
+              }
+            }}
+          >
+            Super Simple Insert
           </Button>
           
           <Button
@@ -403,6 +514,18 @@ const Blogs = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    value={postForm.category}
+                    onChange={(e) =>
+                      setPostForm({ ...postForm, category: e.target.value })
+                    }
+                    placeholder="e.g. Social Media, Marketing, Tips"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="image_url">Featured Image URL</Label>
                   <Input
                     id="image_url"
@@ -439,6 +562,7 @@ const Blogs = () => {
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Category</TableHead>
                 <TableHead>Published</TableHead>
                 <TableHead>Author</TableHead>
                 <TableHead>Actions</TableHead>
@@ -463,6 +587,9 @@ const Blogs = () => {
                     >
                       {post.status}
                     </span>
+                  </TableCell>
+                  <TableCell>
+                    {post.category || 'Uncategorized'}
                   </TableCell>
                   <TableCell>
                     {post.published_at ? formatDate(post.published_at) : 'Not published'}

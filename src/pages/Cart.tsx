@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -9,6 +10,7 @@ import { toast } from 'sonner';
 const Cart = () => {
   const navigate = useNavigate();
   const { items, removeFromCart, updateQuantity, totalAmount, clearCart } = useCart();
+  const { formatCurrency } = useCurrency();
 
   useEffect(() => {
     document.title = 'Shopping Cart | SocialBoost';
@@ -75,7 +77,7 @@ const Cart = () => {
                       </Button>
                     </div>
                     <div className="w-24 text-right">
-                      <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="font-semibold">{formatCurrency(item.price * item.quantity)}</p>
                     </div>
                     <Button
                       variant="ghost"
@@ -98,12 +100,12 @@ const Cart = () => {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-semibold">${totalAmount.toFixed(2)}</span>
+                  <span className="font-semibold">{formatCurrency(totalAmount)}</span>
                 </div>
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center font-semibold mb-6">
                     <span>Total</span>
-                    <span>${totalAmount.toFixed(2)}</span>
+                    <span>{formatCurrency(totalAmount)}</span>
                   </div>
                   <Button 
                     className="w-full"

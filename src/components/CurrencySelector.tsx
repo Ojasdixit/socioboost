@@ -1,29 +1,18 @@
-
-import { useState } from 'react';
+import React from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useCurrency, currencies } from '@/context/CurrencyContext';
 
-const currencies = [
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
-  { code: 'EUR', symbol: '€', name: 'Euro' },
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
-  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
-  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
-];
-
-const CurrencySelector = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
+const CurrencySelector: React.FC = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { currency, setCurrency } = useCurrency();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const selectCurrency = (currency: typeof currencies[0]) => {
-    setSelectedCurrency(currency);
+  const selectCurrency = (newCurrency: typeof currencies[0]) => {
+    setCurrency(newCurrency);
     setIsOpen(false);
-    // In a real application, you would update the global state or context here
-    // to reflect the currency change across the application
   };
 
   return (
@@ -32,22 +21,22 @@ const CurrencySelector = () => {
         className="flex items-center space-x-1 text-gray-700 hover:text-brand-blue"
         onClick={toggleDropdown}
       >
-        <span>{selectedCurrency.symbol} {selectedCurrency.code}</span>
+        <span>{currency.symbol} {currency.code}</span>
         <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       
       {isOpen && (
         <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg py-2 w-48 z-50">
-          {currencies.map((currency) => (
+          {currencies.map((currencyOption) => (
             <button
-              key={currency.code}
+              key={currencyOption.code}
               className={`w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center ${
-                selectedCurrency.code === currency.code ? 'bg-gray-50 font-medium' : ''
+                currency.code === currencyOption.code ? 'bg-gray-50 font-medium' : ''
               }`}
-              onClick={() => selectCurrency(currency)}
+              onClick={() => selectCurrency(currencyOption)}
             >
-              <span className="mr-2">{currency.symbol}</span>
-              <span>{currency.code} - {currency.name}</span>
+              <span className="mr-2">{currencyOption.symbol}</span>
+              <span>{currencyOption.code} - {currencyOption.name}</span>
             </button>
           ))}
         </div>

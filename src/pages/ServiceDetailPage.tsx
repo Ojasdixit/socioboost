@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { toast } from 'sonner';
 import { serviceDetailData } from '@/utils/serviceDetailData';
 
@@ -210,6 +211,7 @@ const ServiceDetailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { formatCurrency } = useCurrency();
   const [quantity, setQuantity] = useState(1);
 
   // Get service type and ID from URL path
@@ -288,11 +290,11 @@ const ServiceDetailPage = () => {
                   <div className="flex items-center justify-between mb-4">
                     {pkg.discounted_price ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-brand-blue">${pkg.discounted_price}</span>
-                        <span className="text-gray-500 line-through">${pkg.price}</span>
+                        <span className="text-2xl font-bold text-brand-blue">{formatCurrency(pkg.discounted_price)}</span>
+                        <span className="text-gray-500 line-through">{formatCurrency(pkg.price)}</span>
                       </div>
                     ) : (
-                      <span className="text-2xl font-bold text-brand-blue">${pkg.price}</span>
+                      <span className="text-2xl font-bold text-brand-blue">{formatCurrency(pkg.price)}</span>
                     )}
                     {pkg.is_featured && (
                       <span className="text-sm bg-brand-pink text-white py-1 px-2 rounded-full">Featured</span>

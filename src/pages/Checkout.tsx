@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +25,7 @@ interface CustomerDetails {
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, totalAmount, clearCart } = useCart();
+  const { formatCurrency } = useCurrency();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({
     firstName: '',
@@ -227,14 +229,14 @@ const Checkout = () => {
                         <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
                       </div>
                       <span className="font-medium">
-                        ${((item.price * item.quantity).toFixed(2))}
+                        {formatCurrency(item.price * item.quantity)}
                       </span>
                     </div>
                   ))}
                   <div className="border-t pt-4">
                     <div className="flex justify-between items-center font-semibold">
                       <span>Total</span>
-                      <span>${totalAmount.toFixed(2)}</span>
+                      <span>{formatCurrency(totalAmount)}</span>
                     </div>
                   </div>
                 </div>
