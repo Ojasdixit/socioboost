@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import AdminLayout from '../admin/AdminLayout';
+import AdminLayout from './AdminLayout';
 import { supabase } from '@/lib/supabase';
 import { 
   Table, 

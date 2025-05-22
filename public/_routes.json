@@ -2,20 +2,23 @@
   "version": 1,
   "routes": [
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/admin",
-      "dest": "/index.html"
+      "dest": "/"
     },
     {
       "src": "/admin/dashboard",
-      "dest": "/index.html"
+      "dest": "/"
     },
     {
       "src": "/admin/dashboard/(.*)",
-      "dest": "/index.html"
+      "dest": "/"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/"
     }
   ]
 } 
