@@ -1,18 +1,8 @@
 {
   "rewrites": [
-    { "source": "/admin", "destination": "/" },
-    { "source": "/admin/dashboard", "destination": "/" },
-    { "source": "/admin/dashboard/(.*)", "destination": "/" },
     { "source": "/(.*)", "destination": "/" }
   ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/admin", "dest": "/" },
-    { "src": "/admin/dashboard", "dest": "/" },
-    { "src": "/admin/dashboard/(.*)", "dest": "/" },
-    { "src": "/(.*)", "dest": "/" }
-  ],
-  "buildCommand": "chmod +x ./vercel-build.sh && ./vercel-build.sh",
+  "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist",
   "framework": "vite"
 } 

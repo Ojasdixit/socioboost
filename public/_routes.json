@@ -5,18 +5,6 @@
       "handle": "filesystem"
     },
     {
-      "src": "/admin",
-      "dest": "/"
-    },
-    {
-      "src": "/admin/dashboard",
-      "dest": "/"
-    },
-    {
-      "src": "/admin/dashboard/(.*)",
-      "dest": "/"
-    },
-    {
       "src": "/(.*)",
       "dest": "/"
     }
