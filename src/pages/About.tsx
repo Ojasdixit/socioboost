@@ -85,9 +85,6 @@ const About = () => {
                 <Button asChild size="lg">
                   <Link to="/services/youtube">Our Services</Link>
                 </Button>
-                <Button variant="outline" asChild size="lg">
-                  <Link to="/contact">Contact Us</Link>
-                </Button>
               </div>
             </div>
             <div className="rounded-lg overflow-hidden shadow-xl">

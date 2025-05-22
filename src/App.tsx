@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import MobileMenu from '@/components/layout/MobileMenu';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -51,6 +52,7 @@ import FacebookPage from '@/pages/FacebookPage';
 import TwitterPage from '@/pages/TwitterPage';
 import GoogleReviewsPage from '@/pages/GoogleReviewsPage';
 import TrustpilotPage from '@/pages/TrustpilotPage';
+import ExplorePage from '@/pages/ExplorePage';
 
 const queryClient = new QueryClient();
 
@@ -70,8 +72,10 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
+                  <MobileMenu />
                   <Routes>
                     <Route path="/" element={<Home />} />
+                    <Route path="/explore" element={<ExplorePage />} />
                     
                     {/* Service category routes - using our new dedicated pages */}
                     <Route path="/services/youtube" element={<YouTubePage />} />

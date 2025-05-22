@@ -83,49 +83,48 @@ const Home = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       
-      {/* Hero Section */}
-      <main className="flex-grow pt-24">
-        <section className="bg-hero-pattern text-white section-padding mt-12">
+      {/* Hero Section - Completely Redesigned */}
+      <main className="flex-grow pt-12 md:pt-24">
+        <section className="bg-gradient-to-r from-brand-blue to-purple-800 text-white section-padding mt-2 md:mt-12">
           <div className="container-custom">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0 md:pr-8">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in">
-                  Boost Your Social Media Presence Today
-                </h1>
+                <div className="relative">
+                  <div className="absolute -top-10 -left-10 w-20 h-20 bg-brand-pink/20 rounded-full blur-xl"></div>
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fade-in relative z-10">
+                    Transform Your Social Media Impact
+                  </h1>
+                </div>
                 <p className="text-lg md:text-xl opacity-90 mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                  Premium social media marketing services for YouTube, Instagram, Facebook, Twitter, and LinkedIn. Get real followers, likes, views, and more.
+                  Premium marketing solutions designed to elevate your presence across YouTube, Instagram, Facebook, Twitter, and LinkedIn.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                  <Link to="/services">
-                    <Button size="lg" className="bg-white text-brand-blue hover:bg-gray-100">
-                      Explore Services
-                    </Button>
-                  </Link>
-                  <Link to="/contact">
-                    <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                      Contact Us
+                <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                  <Link to="/explore">
+                    <Button size="lg" className="bg-white text-brand-blue hover:bg-gray-100 shadow-lg hover:shadow-xl transition-all">
+                      <span className="relative z-10">Discover Our Services</span>
                     </Button>
                   </Link>
                 </div>
               </div>
               <div className="md:w-1/2 animate-slide-up" style={{ animationDelay: '0.6s' }}>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-white/20">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-white/20 relative overflow-hidden">
+                  <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-pink/10 rounded-full blur-xl"></div>
+                  <div className="grid grid-cols-2 gap-4 relative z-10">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
                       <div className="font-bold text-3xl">50M+</div>
                       <div>Followers Delivered</div>
                     </div>
-                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
                       <div className="font-bold text-3xl">100K+</div>
                       <div>Happy Customers</div>
                     </div>
-                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
                       <div className="font-bold text-3xl">5K+</div>
                       <div>Daily Orders</div>
                     </div>
-                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
                       <div className="font-bold text-3xl">24/7</div>
-                      <div>Customer Support</div>
+                      <div>Premium Support</div>
                     </div>
                   </div>
                 </div>
@@ -194,16 +193,23 @@ const Home = () => {
                 link="/services/trustpilot"
                 bgColor="bg-green-50"
               />
-              <Link to="/services" className="block lg:col-span-2">
-                <div className="service-card h-full group">
-                  <div className="p-6 transition-all duration-300 h-full bg-brand-blue text-white flex flex-col items-center justify-center text-center">
-                    <h3 className="font-bold text-xl mb-2">View All Services</h3>
-                    <p className="mb-4">Discover our complete range of social media marketing solutions</p>
-                    <div className="mt-auto">
-                      <Button variant="outline" className="border-white text-white hover:bg-white/20">
-                        Explore More
-                      </Button>
-                    </div>
+              <Link to="/services" className="block lg:col-span-2 transform transition-all duration-300 hover:scale-[1.02]">
+                <div className="service-card h-full overflow-hidden rounded-xl">
+                  <div className="relative p-8 h-full bg-gradient-to-r from-brand-blue to-blue-700 text-white flex flex-col items-center justify-center text-center">
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-x-20 -translate-y-20 blur-2xl"></div>
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full translate-x-10 translate-y-10 blur-2xl"></div>
+                    <Link to="/explore" className="block w-full">
+                      <div className="relative z-10">
+                        <h3 className="font-bold text-2xl mb-3">Complete Service Catalog</h3>
+                        <p className="mb-4 text-white/90">Explore our full range of growth solutions for all major social platforms</p>
+                        <div className="mt-4 inline-flex items-center text-white hover:text-blue-200 transition-colors">
+                          <span className="font-medium">Browse All Services</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      </div>
+                    </Link>
                   </div>
                 </div>
               </Link>
@@ -235,25 +241,25 @@ const Home = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="section-padding bg-cta-pattern text-white">
-          <div className="container-custom">
-            <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Boost Your Social Media?</h2>
-              <p className="text-xl opacity-90 mb-8">
-                Join thousands of satisfied customers who have transformed their online presence with our premium services.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link to="/services">
-                  <Button size="lg" className="bg-white text-brand-purple hover:bg-gray-100">
-                    Get Started
-                  </Button>
-                </Link>
-                <Link to="/contact">
-                  <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                    Contact Sales
-                  </Button>
-                </Link>
+        {/* CTA Section - Completely Redesigned */}
+        <section className="section-padding relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 opacity-90"></div>
+          <div className="absolute inset-0 bg-[url('/patterns/circuit-board.svg')] opacity-10"></div>
+          <div className="container-custom relative z-10">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-10 border border-white/10 shadow-2xl">
+              <div className="text-center max-w-3xl mx-auto text-white">
+                <span className="inline-block px-4 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white text-sm font-medium mb-4">Elevate Your Online Presence</span>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready For Rapid Growth?</h2>
+                <p className="text-xl opacity-90 mb-8">
+                  Join over 100,000 satisfied customers who have transformed their social media presence with our premium growth services.
+                </p>
+                <div className="mt-8">
+                  <Link to="/signup">
+                    <Button size="lg" className="bg-white hover:bg-gray-100 text-brand-blue shadow-xl hover:shadow-2xl transition-all text-lg px-10 py-6 h-auto">
+                      Start Growing Today
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
