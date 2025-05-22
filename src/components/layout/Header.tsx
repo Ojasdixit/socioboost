@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, ChevronDown, ShoppingCart } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -9,14 +9,40 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { totalItems } = useCart();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Handle mouse enter for desktop dropdown
+  const handleMouseEnter = (dropdown: string) => {
+    setOpenDropdown(dropdown);
+  };
+
+  // Handle mouse leave for desktop dropdown
+  const handleMouseLeave = () => {
+    setOpenDropdown(null);
+  };
+
+  // For mobile, we still want to use click behavior
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const services = [
     { 
@@ -100,10 +126,14 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <div className="relative group">
+            <div 
+              className="relative group" 
+              onMouseEnter={() => handleMouseEnter('services')}
+              onMouseLeave={handleMouseLeave}
+              ref={dropdownRef}
+            >
               <button 
                 className="flex items-center space-x-1 text-gray-700 hover:text-brand-blue"
-                onClick={() => toggleDropdown('services')}
               >
                 <span>Services</span>
                 <ChevronDown size={16} />
