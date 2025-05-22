@@ -111,19 +111,19 @@ const Home = () => {
               <div className="md:w-1/2 animate-slide-up" style={{ animationDelay: '0.6s' }}>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-white/20">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
+                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
                       <div className="font-bold text-3xl">50M+</div>
                       <div>Followers Delivered</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
+                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
                       <div className="font-bold text-3xl">100K+</div>
                       <div>Happy Customers</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
+                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
                       <div className="font-bold text-3xl">5K+</div>
                       <div>Daily Orders</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm text-center">
+                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
                       <div className="font-bold text-3xl">24/7</div>
                       <div>Customer Support</div>
                     </div>
