@@ -1,7 +1,7 @@
 // Simple script to recreate the orders tables
 // Run with: node recreate_orders_tables.js
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 // Replace these with your actual Supabase URL and anon key
 const supabaseUrl = 'https://tdyyeygvfojnebppxyug.supabase.co';

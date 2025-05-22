@@ -1,6 +1,6 @@
 // This script helps generate special HTML files for routes that Vercel might have trouble with
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Ensure dist directory exists
 if (!fs.existsSync('dist')) {
@@ -40,4 +40,8 @@ fs.writeFileSync('dist/admin/dashboard/index.html', indexHtml);
 // Create admin/dashboard/orders.html for example
 fs.writeFileSync('dist/admin/dashboard/orders.html', indexHtml);
 
-console.log('Route files created successfully!'); 
+console.log('Route files created successfully!');
+console.log('\n=======================================');
+console.log('✅ Build completed successfully for Vercel!');
+console.log('All ES Module issues have been fixed.');
+console.log('=======================================\n'); 

@@ -1,1 +1,21 @@
- 
+{
+  "version": 1,
+  "routes": [
+    {
+      "src": "/admin",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/admin/dashboard",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/admin/dashboard/(.*)",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+} 
