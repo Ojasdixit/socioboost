@@ -5,14 +5,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import Layout from '@/components/layout/Layout';
+import { useAuth } from '@/context/AuthContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { signIn, user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [emailNotVerified, setEmailNotVerified] = useState(false);
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
   });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     document.title = 'Login | SocialBoost';
@@ -30,21 +42,29 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setEmailNotVerified(false);
 
     try {
-      // For now, we'll just simulate a successful login
-      localStorage.setItem('userToken', 'user-session-token');
-      localStorage.setItem('userData', JSON.stringify({
-        email: credentials.email,
-        firstName: 'John',
-        lastName: 'Doe'
-      }));
-        
-      toast.success('Login successful!');
-      navigate('/');
+      const { error, data } = await signIn(credentials.email, credentials.password);
+      
+      if (error) {
+        // Check if the error is related to email verification
+        if (error.message?.includes('Email not confirmed') || 
+            error.message?.includes('email verification') || 
+            error.message?.includes('not verified')) {
+          setEmailNotVerified(true);
+          throw new Error('Please verify your email address before logging in');
+        }
+        throw error;
+      }
+      
+      if (data?.user) {
+        toast.success('Login successful!');
+        navigate('/');
+      }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Invalid credentials');
+      toast.error(error instanceof Error ? error.message : 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -55,6 +75,15 @@ const Login = () => {
       <div className="container-custom py-16 md:py-24">
         <div className="max-w-md mx-auto">
           <h1 className="text-4xl font-bold mb-6 text-center">Sign In</h1>
+          
+          {emailNotVerified && (
+            <Alert className="mb-6 bg-amber-50 border-amber-200">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertDescription className="text-amber-800">
+                Your email address has not been verified. Please check your inbox for a verification link.
+              </AlertDescription>
+            </Alert>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

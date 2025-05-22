@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect, ReactNode } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
@@ -20,7 +20,11 @@ import {
 import { toast } from 'sonner';
 import ScrollToTop from '@/components/ui/scroll-to-top';
 
-const AdminLayout = () => {
+interface AdminLayoutProps {
+  children: ReactNode;
+}
+
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,7 +42,7 @@ const AdminLayout = () => {
       toast.error('You must be logged in to access the admin panel');
       navigate('/admin');
     }
-  }, [navigate]);
+  }, []);
 
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/admin/dashboard' },
@@ -105,7 +109,7 @@ const AdminLayout = () => {
 
       {/* Main Content */}
       <div className="ml-64 p-8">
-        <Outlet />
+        {children}
       </div>
       <ScrollToTop />
     </div>

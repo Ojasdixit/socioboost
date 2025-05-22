@@ -1,14 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, X, ChevronDown, ShoppingCart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X, ChevronDown, ShoppingCart, LogOut, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import CurrencySelector from '@/components/CurrencySelector';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const { totalItems } = useCart();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => {
@@ -28,6 +32,18 @@ const Header = () => {
   // For mobile, we still want to use click behavior
   const toggleDropdown = (dropdown: string) => {
     setOpenDropdown(openDropdown === dropdown ? null : dropdown);
+  };
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success('Logged out successfully');
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast.error('Failed to log out');
+    }
   };
 
   // Close dropdown when clicking outside
@@ -186,13 +202,37 @@ const Header = () => {
               )}
             </Link>
             
-            <Link to="/login">
-              <Button variant="outline" className="mr-2">Log In</Button>
-            </Link>
-            
-            <Link to="/signup">
-              <Button>Sign Up</Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/orders" className="text-gray-700 hover:text-brand-blue">
+                  My Orders
+                </Link>
+                
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">
+                    {user.email?.split('@')[0]}
+                  </span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={handleLogout}
+                    title="Log out"
+                  >
+                    <LogOut size={18} />
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="mr-2">Log In</Button>
+                </Link>
+                
+                <Link to="/signup">
+                  <Button>Sign Up</Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -249,6 +289,10 @@ const Header = () => {
               <Link to="/contact" className="py-2 text-gray-700 hover:text-brand-blue">Contact</Link>
               <Link to="/faq" className="py-2 text-gray-700 hover:text-brand-blue">FAQ</Link>
               
+              {user && (
+                <Link to="/orders" className="py-2 text-gray-700 hover:text-brand-blue">My Orders</Link>
+              )}
+              
               <div className="pt-4 flex items-center justify-between border-t">
                 <CurrencySelector />
                 
@@ -263,13 +307,33 @@ const Header = () => {
               </div>
               
               <div className="pt-4 flex flex-col space-y-2 border-t">
-                <Link to="/login">
-                  <Button variant="outline" className="w-full">Log In</Button>
-                </Link>
-                
-                <Link to="/signup">
-                  <Button className="w-full">Sign Up</Button>
-                </Link>
+                {user ? (
+                  <>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">
+                        {user.email?.split('@')[0]}
+                      </span>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={handleLogout}
+                    >
+                      <LogOut size={16} className="mr-2" />
+                      Log Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login">
+                      <Button variant="outline" className="w-full">Log In</Button>
+                    </Link>
+                    
+                    <Link to="/signup">
+                      <Button className="w-full">Sign Up</Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

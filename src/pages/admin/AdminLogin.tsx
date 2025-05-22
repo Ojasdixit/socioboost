@@ -46,8 +46,8 @@ const AdminLogin = () => {
       // Show success message
       toast.success('Login successful!');
       
-      // Use window.location for a full page reload - more reliable for session
-      window.location.href = '/admin/dashboard';
+      // Navigate to dashboard
+      navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error instanceof Error ? error.message : 'Invalid credentials');
