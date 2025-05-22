@@ -21,8 +21,8 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <div className="service-card group">
         <div className={`p-6 transition-all duration-300 h-full ${bgColor} group-hover:bg-opacity-80`}>
           <div className="mb-4 text-brand-blue">{icon}</div>
-          <h3 className="font-bold text-xl mb-2 text-gray-800">{title}</h3>
-          <p className="text-gray-600 mb-4">{description}</p>
+          <h3 className="font-bold text-xl mb-2 text-black">{title}</h3>
+          <p className="text-black mb-4">{description}</p>
           <div className="font-medium text-brand-blue flex items-center">
             Learn More
             <svg

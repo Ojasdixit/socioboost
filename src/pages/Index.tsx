@@ -111,19 +111,19 @@ const Home = () => {
               <div className="md:w-1/2 animate-slide-up" style={{ animationDelay: '0.6s' }}>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-xl border border-white/20">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
+                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
                       <div className="font-bold text-3xl">50M+</div>
                       <div>Followers Delivered</div>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
+                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
                       <div className="font-bold text-3xl">100K+</div>
                       <div>Happy Customers</div>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
+                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
                       <div className="font-bold text-3xl">5K+</div>
                       <div>Daily Orders</div>
                     </div>
-                    <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm text-center text-white">
+                    <div className="bg-brand-blue rounded-lg p-4 text-center text-white">
                       <div className="font-bold text-3xl">24/7</div>
                       <div>Customer Support</div>
                     </div>
@@ -196,7 +196,7 @@ const Home = () => {
               />
               <Link to="/services" className="block lg:col-span-2">
                 <div className="service-card h-full group">
-                  <div className="p-6 transition-all duration-300 h-full bg-gradient-to-br from-brand-blue to-brand-purple text-white flex flex-col items-center justify-center text-center">
+                  <div className="p-6 transition-all duration-300 h-full bg-brand-blue text-white flex flex-col items-center justify-center text-center">
                     <h3 className="font-bold text-xl mb-2">View All Services</h3>
                     <p className="mb-4">Discover our complete range of social media marketing solutions</p>
                     <div className="mt-auto">
@@ -227,8 +227,8 @@ const Home = () => {
                   <div className="text-brand-blue mb-4">
                     {feature.icon}
                   </div>
-                  <h3 className="font-bold text-xl mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="font-bold text-xl mb-2 text-black">{feature.title}</h3>
+                  <p className="text-black">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -310,26 +310,26 @@ const Home = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <div className="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 className="font-bold text-lg mb-2">Is it safe to use your services?</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg mb-2 text-black">Is it safe to use your services?</h3>
+                <p className="text-black">
                   Yes, all our services are 100% safe. We follow platform guidelines and use secure methods to ensure your account safety.
                 </p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 className="font-bold text-lg mb-2">How fast do you deliver?</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg mb-2 text-black">How fast do you deliver?</h3>
+                <p className="text-black">
                   Delivery times vary by service, but most orders start within minutes and complete in 1-3 days for optimal, natural growth.
                 </p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 className="font-bold text-lg mb-2">Do you need my password?</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg mb-2 text-black">Do you need my password?</h3>
+                <p className="text-black">
                   No, we never ask for your password. We only need your public username or link to deliver our services.
                 </p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm border">
-                <h3 className="font-bold text-lg mb-2">What payment methods do you accept?</h3>
-                <p className="text-gray-600">
+                <h3 className="font-bold text-lg mb-2 text-black">What payment methods do you accept?</h3>
+                <p className="text-black">
                   We accept all major credit cards, PayPal, and various cryptocurrencies for your convenience and security.
                 </p>
               </div>
