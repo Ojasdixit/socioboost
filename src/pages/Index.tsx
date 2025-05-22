@@ -84,8 +84,8 @@ const Home = () => {
       <Header />
       
       {/* Hero Section - Completely Redesigned */}
-      <main className="flex-grow pt-12 md:pt-24">
-        <section className="bg-gradient-to-r from-brand-blue to-purple-800 text-white section-padding mt-2 md:mt-12">
+      <main className="flex-grow pt-0 md:pt-8">
+        <section className="bg-gradient-to-r from-brand-blue to-purple-800 text-white section-padding mt-0">
           <div className="container-custom">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0 md:pr-8">
@@ -193,12 +193,12 @@ const Home = () => {
                 link="/services/trustpilot"
                 bgColor="bg-green-50"
               />
-              <Link to="/services" className="block lg:col-span-2 transform transition-all duration-300 hover:scale-[1.02]">
+              <div className="lg:col-span-2 transform transition-all duration-300 hover:scale-[1.02]">
                 <div className="service-card h-full overflow-hidden rounded-xl">
-                  <div className="relative p-8 h-full bg-gradient-to-r from-brand-blue to-blue-700 text-white flex flex-col items-center justify-center text-center">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-x-20 -translate-y-20 blur-2xl"></div>
-                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full translate-x-10 translate-y-10 blur-2xl"></div>
-                    <Link to="/explore" className="block w-full">
+                  <Link to="/explore" className="block w-full">
+                    <div className="relative p-8 h-full bg-gradient-to-r from-brand-blue to-blue-700 text-white flex flex-col items-center justify-center text-center">
+                      <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-x-20 -translate-y-20 blur-2xl"></div>
+                      <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full translate-x-10 translate-y-10 blur-2xl"></div>
                       <div className="relative z-10">
                         <h3 className="font-bold text-2xl mb-3">Complete Service Catalog</h3>
                         <p className="mb-4 text-white/90">Explore our full range of growth solutions for all major social platforms</p>
@@ -209,10 +209,10 @@ const Home = () => {
                           </svg>
                         </div>
                       </div>
-                    </Link>
-                  </div>
+                    </div>
+                  </Link>
                 </div>
-              </Link>
+              </div>
             </div>
           </div>
         </section>

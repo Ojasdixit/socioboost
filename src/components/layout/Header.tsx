@@ -133,15 +133,32 @@ const Header = () => {
         <p>🎓 Special 20% Student Discount Available! Use code: STUDENT20</p>
       </div>
       
-      <div className="container-custom">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-brand-blue">Social<span className="text-brand-pink">Boost</span></span>
-          </Link>
+      <div className="container-custom py-4">
+        {/* Main Header Content */}
+        <div className="flex justify-between items-center">
+          {/* Logo and Mobile Cart/Currency */}
+          <div className="flex items-center">
+            <Link to="/" className="text-2xl font-bold text-brand-blue flex items-center">
+              SocialBoost
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+            {/* Mobile Cart and Currency */}
+            <div className="flex items-center ml-4 md:hidden space-x-3">
+              <CurrencySelector />
+              
+              <Link to="/cart" className="relative text-gray-700 hover:text-brand-blue">
+                <ShoppingCart size={20} />
+                {totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-brand-pink text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            </div>
+          </div>
+
+          {/* Main Navigation - Desktop Only */}
+          <nav className="hidden md:flex items-center space-x-6">
             <div 
               className="relative group" 
               onMouseEnter={() => handleMouseEnter('services')}
