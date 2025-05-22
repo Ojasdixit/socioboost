@@ -12,6 +12,8 @@ interface Package {
   price: number;
   discounted_price: number | null;
   is_featured: boolean;
+  service_type?: string;
+  service_id?: string;
 }
 
 interface ServiceCounts {
@@ -50,11 +52,11 @@ const DebugPage: React.FC = () => {
         
         // Count packages by service type
         const counts: ServiceCounts = {};
-        const serviceTypes = ['YouTube', 'Instagram', 'Facebook', 'Twitter', 'LinkedIn', 'Google', 'Trustpilot'];
+        const serviceTypes = ['youtube', 'instagram', 'facebook', 'twitter', 'linkedin', 'google-reviews', 'trustpilot'];
         
         serviceTypes.forEach(serviceType => {
           counts[serviceType] = data.filter(pkg => 
-            pkg.name.startsWith(serviceType)
+            pkg.service_type === serviceType
           ).length;
         });
         
@@ -131,7 +133,10 @@ const DebugPage: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {Object.entries(serviceCounts).map(([service, count]) => (
                   <div key={service} className={`p-4 rounded-lg border ${count > 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-                    <h3 className="font-semibold">{service}</h3>
+                    <h3 className="font-semibold">
+                      {service === 'google-reviews' ? 'Google Reviews' : 
+                       service.charAt(0).toUpperCase() + service.slice(1)}
+                    </h3>
                     <p className={count > 0 ? 'text-green-600' : 'text-red-600'}>
                       {count} packages
                     </p>
@@ -163,6 +168,8 @@ const DebugPage: React.FC = () => {
                       <th className="py-2 px-4 border-b">Price</th>
                       <th className="py-2 px-4 border-b">Discounted Price</th>
                       <th className="py-2 px-4 border-b">Featured</th>
+                      <th className="py-2 px-4 border-b">Service Type</th>
+                      <th className="py-2 px-4 border-b">Service ID</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -174,6 +181,8 @@ const DebugPage: React.FC = () => {
                         <td className="py-2 px-4 border-b">${pkg.price}</td>
                         <td className="py-2 px-4 border-b">{pkg.discounted_price ? `$${pkg.discounted_price}` : '-'}</td>
                         <td className="py-2 px-4 border-b">{pkg.is_featured ? 'Yes' : 'No'}</td>
+                        <td className="py-2 px-4 border-b">{pkg.service_type || '-'}</td>
+                        <td className="py-2 px-4 border-b">{pkg.service_id || '-'}</td>
                       </tr>
                     ))}
                   </tbody>
