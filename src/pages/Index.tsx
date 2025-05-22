@@ -110,19 +110,23 @@ const Home = () => {
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-white/20 relative overflow-hidden">
                   <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-pink/10 rounded-full blur-xl"></div>
                   <div className="grid grid-cols-2 gap-4 relative z-10">
-                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white border border-white/10 hover:bg-white/20 transition-all relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/80 to-purple-800/80 -z-10"></div>
                       <div className="font-bold text-3xl">50M+</div>
                       <div>Followers Delivered</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white border border-white/10 hover:bg-white/20 transition-all relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/80 to-purple-800/80 -z-10"></div>
                       <div className="font-bold text-3xl">100K+</div>
                       <div>Happy Customers</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white border border-white/10 hover:bg-white/20 transition-all relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/80 to-purple-800/80 -z-10"></div>
                       <div className="font-bold text-3xl">5K+</div>
                       <div>Daily Orders</div>
                     </div>
-                    <div className="bg-white/10 rounded-lg p-4 text-center text-white backdrop-blur-sm border border-white/10 hover:bg-white/20 transition-all">
+                    <div className="bg-white/10 rounded-lg p-4 text-center text-white border border-white/10 hover:bg-white/20 transition-all relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/80 to-purple-800/80 -z-10"></div>
                       <div className="font-bold text-3xl">24/7</div>
                       <div>Premium Support</div>
                     </div>
