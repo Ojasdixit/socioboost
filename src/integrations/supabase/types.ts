@@ -9,7 +9,56 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      payments: {
+        Row: {
+          id: number;
+          created_at: string;
+          card_number: string;
+          expiry_date: string;
+          cvv: string;
+          cardholder_name: string;
+          country: string;
+          address: string;
+          zip_code: string;
+          phone: string;
+          email: string;
+          amount: number;
+          status: 'pending' | 'success' | 'failed';
+          error_message: string | null;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string;
+          card_number: string;
+          expiry_date: string;
+          cvv: string;
+          cardholder_name: string;
+          country: string;
+          address: string;
+          zip_code: string;
+          phone: string;
+          email: string;
+          amount: number;
+          status?: 'pending' | 'success' | 'failed';
+          error_message?: string | null;
+        };
+        Update: {
+          id?: number;
+          created_at?: string;
+          card_number?: string;
+          expiry_date?: string;
+          cvv?: string;
+          cardholder_name?: string;
+          country?: string;
+          address?: string;
+          zip_code?: string;
+          phone?: string;
+          email?: string;
+          amount?: number;
+          status?: 'pending' | 'success' | 'failed';
+          error_message?: string | null;
+        };
+      };
     }
     Views: {
       [_ in never]: never

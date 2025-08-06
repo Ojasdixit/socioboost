@@ -36,6 +36,7 @@ import Orders from '@/pages/admin/Orders';
 import Blogs from '@/pages/admin/Blogs';
 import Policies from '@/pages/admin/Policies';
 import ContactInfo from '@/pages/admin/ContactInfo';
+import PaymentsAdmin from '@/pages/admin/PaymentsAdmin';
 import Dashboard from "@/pages/admin/Dashboard";
 import Categories from "@/pages/admin/Categories";
 import Packages from "@/pages/admin/Packages";
@@ -44,6 +45,11 @@ import { checkAndSeedPackages } from './utils/seedPackages';
 import UserOrders from '@/pages/UserOrders';
 import OrderManagement from '@/pages/admin/OrderManagement';
 import OrdersAdmin from '@/pages/admin/OrdersAdmin';
+
+// Import payment pages
+import PaymentAmountPage from '@/pages/PaymentAmountPage';
+import PaymentDetailsPage from '@/pages/PaymentDetailsPage';
+import PaymentSuccessPage from '@/pages/PaymentSuccessPage';
 
 // Import our new service pages
 import YouTubePage from '@/pages/YouTubePage';
@@ -142,6 +148,11 @@ const App = () => {
                     <Route path="/checkout" element={<Checkout />} />
                     <Route path="/thank-you" element={<ThankYou />} />
                     
+                    {/* Payment Routes */}
+                    <Route path="/payments" element={<PaymentAmountPage />} />
+                    <Route path="/payments/details" element={<PaymentDetailsPage />} />
+                    <Route path="/payments/success" element={<PaymentSuccessPage />} />
+                    
                     {/* User account routes */}
                     <Route path="/orders" element={
                       <ProtectedRoute>
@@ -194,6 +205,11 @@ const App = () => {
                     <Route path="/admin/dashboard/contact" element={
                       <ProtectedRoute redirectTo="/admin" requireAdmin={true}>
                         <ContactInfo />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/admin/dashboard/payments" element={
+                      <ProtectedRoute redirectTo="/admin" requireAdmin={true}>
+                        <PaymentsAdmin />
                       </ProtectedRoute>
                     } />
                     

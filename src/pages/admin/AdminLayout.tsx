@@ -15,7 +15,8 @@ import {
   Layers,
   Tag,
   PackageOpen,
-  ShoppingBag
+  ShoppingBag,
+  CreditCard
 } from 'lucide-react';
 import { toast } from 'sonner';
 import ScrollToTop from '@/components/ui/scroll-to-top';
@@ -54,6 +55,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { icon: <FileText size={20} />, label: 'Blogs', path: '/admin/dashboard/blogs' },
     { icon: <FileText size={20} />, label: 'Policies', path: '/admin/dashboard/policies' },
     { icon: <Mail size={20} />, label: 'Contact Info', path: '/admin/dashboard/contact' },
+    { icon: <CreditCard size={20} />, label: 'Payments', path: '/admin/dashboard/payments' },
   ];
 
   const handleLogout = () => {
