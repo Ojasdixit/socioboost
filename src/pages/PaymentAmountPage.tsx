@@ -50,7 +50,10 @@ export default function PaymentAmountPage() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit" className="bg-primary">
+            <Button
+              type="submit"
+              className="bg-[#635BFF] hover:bg-[#5548c8] text-white font-bold rounded-lg shadow-md px-6 py-2 transition-colors duration-150"
+            >
               Continue to Payment
             </Button>
           </CardFooter>

