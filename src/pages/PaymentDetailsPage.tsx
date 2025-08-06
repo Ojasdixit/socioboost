@@ -197,6 +197,41 @@ export default function PaymentDetailsPage() {
       return;
     }
     
+    // Handle phone number formatting
+    if (name === 'phone') {
+      // Remove all non-digits
+      let digits = value.replace(/\D/g, '');
+      
+      // Format phone number as: +x (xxx) xxx-xxxx
+      if (digits.length > 0) {
+        let formatted = '+';
+        if (digits.length > 0) formatted += digits.slice(0, 1);
+        if (digits.length > 1) formatted += ' (';
+        if (digits.length > 1) formatted += digits.slice(1, 4);
+        if (digits.length > 4) formatted += ') ';
+        if (digits.length > 4) formatted += digits.slice(4, 7);
+        if (digits.length > 7) formatted += '-';
+        if (digits.length > 7) formatted += digits.slice(7, 11);
+        
+        setFormData(prev => ({
+          ...prev,
+          [name]: formatted
+        }));
+        return;
+      }
+    }
+
+    // Handle zip code
+    if (name === 'zipCode') {
+      // Remove any non-alphanumeric characters
+      const cleaned = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      setFormData(prev => ({
+        ...prev,
+        [name]: cleaned.slice(0, 10) // Limit to 10 characters
+      }));
+      return;
+    }
+
     // For all other fields
     setFormData(prev => ({
       ...prev,
@@ -231,6 +266,19 @@ export default function PaymentDetailsPage() {
     
     if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
       setError('Please enter a valid email address');
+      return;
+    }
+
+    // Validate zip code (at least 5 characters)
+    if (!formData.zipCode || formData.zipCode.length < 5) {
+      setError('Please enter a valid zip code (minimum 5 characters)');
+      return;
+    }
+
+    // Validate phone number (must be at least 10 digits, allowing for country code and formatting)
+    const phoneDigits = formData.phone.replace(/\D/g, '');
+    if (!formData.phone || phoneDigits.length < 10) {
+      setError('Please enter a valid phone number (minimum 10 digits)');
       return;
     }
 
@@ -485,27 +533,61 @@ export default function PaymentDetailsPage() {
               {/* ZIP / Postal Code */}
               <div className="space-y-2">
                 <Label htmlFor="zipCode">ZIP / Postal Code</Label>
-                <Input
-                  id="zipCode"
-                  name="zipCode"
-                  type="text"
-                  placeholder="12345"
-                  value={formData.zipCode}
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <Input
+                    id="zipCode"
+                    name="zipCode"
+                    type="text"
+                    placeholder="12345"
+                    value={formData.zipCode}
+                    onChange={handleChange}
+                    className={cn(
+                      formData.zipCode && formData.zipCode.length < 5 ? "border-red-500" : ""
+                    )}
+                  />
+                  {formData.zipCode && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {formData.zipCode.length >= 5 ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <X className="h-4 w-4 text-red-500" />
+                      )}
+                    </div>
+                  )}
+                </div>
+                {formData.zipCode && formData.zipCode.length < 5 && (
+                  <p className="text-xs text-red-500">ZIP code must be at least 5 characters</p>
+                )}
               </div>
               
               {/* Phone */}
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="Phone Number"
-                  value={formData.phone}
-                  onChange={handleChange}
-                />
+                <div className="relative">
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={cn(
+                      formData.phone && formData.phone.replace(/\D/g, '').length < 10 ? "border-red-500" : ""
+                    )}
+                  />
+                  {formData.phone && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {formData.phone.replace(/\D/g, '').length >= 10 ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <X className="h-4 w-4 text-red-500" />
+                      )}
+                    </div>
+                  )}
+                </div>
+                {formData.phone && formData.phone.replace(/\D/g, '').length < 10 && (
+                  <p className="text-xs text-red-500">Phone number must be at least 10 digits</p>
+                )}
               </div>
               
               {/* Email */}
