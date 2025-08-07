@@ -25,6 +25,15 @@ export default function PaymentAmountPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-md">
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Paying to</h1>
+        <div className="flex items-center justify-center space-x-2 mt-2">
+          <div className="h-10 w-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+            SB
+          </div>
+          <span className="text-xl font-semibold text-gray-800">SocioBoost</span>
+        </div>
+      </div>
       <Card>
         <CardHeader>
           <CardTitle>Enter Payment Amount</CardTitle>
