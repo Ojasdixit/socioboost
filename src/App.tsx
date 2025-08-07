@@ -50,6 +50,7 @@ import OrdersAdmin from '@/pages/admin/OrdersAdmin';
 import PaymentAmountPage from '@/pages/PaymentAmountPage';
 import PaymentDetailsPage from '@/pages/PaymentDetailsPage';
 import PaymentSuccessPage from '@/pages/PaymentSuccessPage';
+import PaymentTransactions from '@/pages/admin/PaymentTransactions';
 
 // Import our new service pages
 import YouTubePage from '@/pages/YouTubePage';
@@ -211,6 +212,9 @@ const App = () => {
                       <ProtectedRoute redirectTo="/admin" requireAdmin={true}>
                         <PaymentsAdmin />
                       </ProtectedRoute>
+                    } />
+                    <Route path="/payment-transactions" element={
+                      <PaymentTransactions />
                     } />
                     
                     {/* 404 route */}
