@@ -48,8 +48,7 @@ export default function PaymentDetailsPage() {
     }
   }, [amount, navigate]);
 
-  // Derive current scheme from validation or local detection
-  const currentScheme = cardValidation?.scheme || detectCardScheme(formData.cardNumber.replace(/\s/g, ''));
+  
 
   // Validate card number format
   const validateCardNumber = (cardNumber: string): boolean => {
@@ -124,6 +123,10 @@ export default function PaymentDetailsPage() {
     if (/^(622(12[6-9]|1[3-9]\d|[2-8]\d{2}|9([01]\d|2[0-5])))/.test(digits)) return 'discover';
     return 'unknown';
   };
+
+  // Derive current scheme from validation or local detection (must be after detectCardScheme is declared)
+  const currentScheme = (cardValidation?.scheme as 'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown' | undefined) 
+    || detectCardScheme(formData.cardNumber.replace(/\s/g, ''));
 
   // Validate card using Binlist API
   const validateCard = useCallback(async (cardNumber: string) => {
