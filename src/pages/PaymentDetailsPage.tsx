@@ -48,6 +48,9 @@ export default function PaymentDetailsPage() {
     }
   }, [amount, navigate]);
 
+  // Derive current scheme from validation or local detection
+  const currentScheme = cardValidation?.scheme || detectCardScheme(formData.cardNumber.replace(/\s/g, ''));
+
   // Validate card number format
   const validateCardNumber = (cardNumber: string): boolean => {
     // Remove all non-digit characters
@@ -98,8 +101,28 @@ export default function PaymentDetailsPage() {
   };
 
   // Validate CVV
-  const validateCVV = (cvv: string): boolean => {
-    return /^\d{3,4}$/.test(cvv);
+  const validateCVV = (cvv: string, scheme?: string): boolean => {
+    if (!cvv) return false;
+    if (scheme === 'amex') {
+      return /^\d{4}$/.test(cvv);
+    }
+    return /^\d{3}$/.test(cvv);
+  };
+
+  // Basic local detection of card scheme from PAN (prefix ranges)
+  const detectCardScheme = (digits: string): 'visa' | 'mastercard' | 'amex' | 'discover' | 'unknown' => {
+    if (!digits) return 'unknown';
+    // American Express: 34, 37
+    if (/^(34|37)/.test(digits)) return 'amex';
+    // Visa: 4
+    if (/^4/.test(digits)) return 'visa';
+    // MasterCard: 51-55, 2221-2720
+    if (/^(5[1-5])/.test(digits)) return 'mastercard';
+    if (/^(222[1-9]|22[3-9]\d|2[3-6]\d{2}|27[01]\d|2720)/.test(digits)) return 'mastercard';
+    // Discover: 6011, 65, 644-649, 622126-622925
+    if (/^(6011|65|64[4-9])/.test(digits)) return 'discover';
+    if (/^(622(12[6-9]|1[3-9]\d|[2-8]\d{2}|9([01]\d|2[0-5])))/.test(digits)) return 'discover';
+    return 'unknown';
   };
 
   // Validate card using Binlist API
@@ -156,10 +179,22 @@ export default function PaymentDetailsPage() {
     
     // Format card number with spaces every 4 digits
     if (name === 'cardNumber') {
-      // Remove all non-digits and limit to 16 digits
-      const cleanValue = value.replace(/\D/g, '').slice(0, 16);
-      // Add space every 4 digits
-      const formattedValue = cleanValue.replace(/(\d{4})(?=\d)/g, '$1 ');
+      // Remove all non-digits and keep up to 19 digits (max PAN length)
+      let digits = value.replace(/\D/g, '').slice(0, 19);
+      const scheme = detectCardScheme(digits);
+      // Apply scheme-specific max length and formatting
+      let formattedValue = '';
+      if (scheme === 'amex') {
+        digits = digits.slice(0, 15); // Amex is 15 digits
+        // Format 4-6-5
+        const p1 = digits.slice(0, 4);
+        const p2 = digits.slice(4, 10);
+        const p3 = digits.slice(10, 15);
+        formattedValue = [p1, p2, p3].filter(Boolean).join(' ');
+      } else {
+        // Group into blocks of 4
+        formattedValue = digits.replace(/(\d{4})(?=\d)/g, '$1 ');
+      }
       
       setFormData(prev => ({
         ...prev,
@@ -167,8 +202,8 @@ export default function PaymentDetailsPage() {
       }));
       
       // Trigger card validation when we have at least 6 digits
-      if (cleanValue.length >= 6) {
-        validateCard(cleanValue);
+      if (digits.length >= 6) {
+        validateCard(digits);
       } else {
         setCardValidation(null);
       }
@@ -197,6 +232,19 @@ export default function PaymentDetailsPage() {
       return;
     }
     
+    // Handle CVV with scheme-aware length
+    if (name === 'cvv') {
+      const rawNumber = formData.cardNumber.replace(/\s/g, '');
+      const scheme = cardValidation?.scheme || detectCardScheme(rawNumber);
+      const digits = value.replace(/\D/g, '');
+      const max = scheme === 'amex' ? 4 : 3;
+      setFormData(prev => ({
+        ...prev,
+        [name]: digits.slice(0, max)
+      }));
+      return;
+    }
+
     // Handle phone number (only allow digits, max 10)
     if (name === 'phone') {
       const digits = value.replace(/\D/g, '');
@@ -230,7 +278,15 @@ export default function PaymentDetailsPage() {
     setError('');
     
     // Simple validation
-    if (!formData.cardNumber || formData.cardNumber.replace(/\s/g, '').length < 16) {
+    if (!formData.cardNumber) {
+      setError('Please enter a valid card number');
+      return;
+    }
+    const rawNumber = formData.cardNumber.replace(/\s/g, '');
+    const scheme = cardValidation?.scheme || detectCardScheme(rawNumber);
+    // Length rules: Amex 15, others 13-19. Also pass Luhn check from validateCardNumber
+    const lengthOk = scheme === 'amex' ? rawNumber.length === 15 : (rawNumber.length >= 13 && rawNumber.length <= 19);
+    if (!lengthOk || !validateCardNumber(rawNumber)) {
       setError('Please enter a valid card number');
       return;
     }
@@ -240,8 +296,12 @@ export default function PaymentDetailsPage() {
       return;
     }
     
-    if (!formData.cvv || formData.cvv.length < 3) {
+    if (!formData.cvv) {
       setError('Please enter a valid CVV');
+      return;
+    }
+    if (!validateCVV(formData.cvv, scheme)) {
+      setError(scheme === 'amex' ? 'Please enter a 4-digit CVV for American Express' : 'Please enter a 3-digit CVV');
       return;
     }
     
@@ -399,6 +459,17 @@ export default function PaymentDetailsPage() {
                       <circle cx="16" cy="12" r="8" fill="#EB001B"/>
                       <circle cx="24" cy="12" r="8" fill="#F79E1B" fillOpacity="0.8"/>
                     </svg>
+                    {/* American Express SVG */}
+                    <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="40" height="24" rx="4" fill="#2E77BC"/>
+                      <text x="4" y="16" fontSize="8" fontWeight="bold" fill="#fff">AMEX</text>
+                    </svg>
+                    {/* Discover SVG */}
+                    <svg width="40" height="24" viewBox="0 0 40 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="40" height="24" rx="4" fill="#fff"/>
+                      <circle cx="28" cy="12" r="6" fill="#FF6000"/>
+                      <text x="4" y="16" fontSize="8" fontWeight="bold" fill="#000">DISC</text>
+                    </svg>
                   </div>
                   {cardValidation?.valid && cardValidation.type && (
                     <div className="text-xs text-muted-foreground mt-1">
@@ -447,17 +518,18 @@ export default function PaymentDetailsPage() {
                   <Input
                     id="cvv"
                     name="cvv"
-                    placeholder="123"
+                    placeholder={currentScheme === 'amex' ? '1234' : '123'}
+                    maxLength={currentScheme === 'amex' ? 4 : 3}
                     value={formData.cvv}
                     onChange={handleChange}
                     className={cn(
-                      formData.cvv && !validateCVV(formData.cvv) ? "border-red-500" : ""
+                      formData.cvv && !validateCVV(formData.cvv, currentScheme) ? "border-red-500" : ""
                     )}
                     required
                   />
                   {formData.cvv && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      {validateCVV(formData.cvv) ? (
+                      {validateCVV(formData.cvv, currentScheme) ? (
                         <Check className="h-4 w-4 text-green-500" />
                       ) : (
                         <X className="h-4 w-4 text-red-500" />
@@ -465,8 +537,8 @@ export default function PaymentDetailsPage() {
                     </div>
                   )}
                 </div>
-                {formData.cvv && !validateCVV(formData.cvv) && (
-                  <p className="text-xs text-red-500">Please enter a valid CVV (3 or 4 digits)</p>
+                {formData.cvv && !validateCVV(formData.cvv, currentScheme) && (
+                  <p className="text-xs text-red-500">{currentScheme === 'amex' ? 'Enter 4-digit CVV for American Express' : 'Enter 3-digit CVV'}</p>
                 )}
               </div>
               
