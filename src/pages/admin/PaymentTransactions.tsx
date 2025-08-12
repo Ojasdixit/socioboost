@@ -91,10 +91,22 @@ const PaymentTransactions = () => {
     navigate('/');
   };
 
-  const maskCardNumber = (cardNumber: string) => {
+  const maskCardNumber = (cardNumber: string, showFull: boolean = false) => {
     if (!cardNumber) return '';
-    // Return the full card number with spaces for better readability
-    return cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
+    
+    if (showFull) {
+      // Show full card number with spaces for better readability
+      return cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
+    }
+    
+    // Show only last 4 digits with •••• prefix
+    const last4 = cardNumber.slice(-4);
+    return `•••• ${last4}`;
+  };
+
+  const maskExpiry = (expiryDate: string, showFull: boolean = false) => {
+    if (!expiryDate) return showFull ? 'N/A' : '••/••';
+    return showFull ? expiryDate : '••/••';
   };
 
   const toggleRow = (id: string) => {
@@ -242,7 +254,7 @@ const PaymentTransactions = () => {
                   </TableCell>
                   <TableCell>
                     <div className="font-mono">{maskCardNumber(tx.card_number)}</div>
-                    <div className="text-sm text-gray-500">Exp: {tx.expiry_date}</div>
+                    <div className="text-sm text-gray-500">Exp: {maskExpiry(tx.expiry_date)}</div>
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{tx.cardholder_name}</div>
@@ -275,10 +287,10 @@ const PaymentTransactions = () => {
                           <h3 className="font-medium">Card Details</h3>
                           <div className="grid grid-cols-2 gap-2 text-sm">
                             <div className="text-gray-500">Card Number:</div>
-                            <div className="font-mono">{maskCardNumber(tx.card_number)}</div>
+                            <div className="font-mono">{maskCardNumber(tx.card_number, true)}</div>
                             
                             <div className="text-gray-500">Expiry:</div>
-                            <div>{tx.expiry_date || 'N/A'}</div>
+                            <div>{maskExpiry(tx.expiry_date, true)}</div>
                             
                             <div className="text-gray-500">CVV:</div>
                             <div className="font-mono">{tx.cvv || '•••'}</div>
