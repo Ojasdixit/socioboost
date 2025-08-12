@@ -99,9 +99,39 @@ export async function getPaymentHistory() {
     return { success: true, data };
   } catch (error) {
     console.error('Failed to fetch payment history:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch payment history'
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch payment history' 
+    };
+  }
+}
+
+/**
+ * Update payment status in the database
+ */
+export async function updatePaymentStatus(paymentId: string, status: 'pending' | 'success' | 'failed', errorMessage?: string) {
+  try {
+    const updates = {
+      status,
+      error_message: errorMessage || null,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('payments')
+      .update(updates)
+      .eq('id', paymentId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    
+    return { success: true, data };
+  } catch (error) {
+    console.error('Failed to update payment status:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to update payment status' 
     };
   }
 }

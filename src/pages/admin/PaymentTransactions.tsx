@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { updatePaymentStatus } from '@/lib/payments';
 
 interface PaymentTransaction {
   id: string;
@@ -32,6 +33,7 @@ const PaymentTransactions = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [updatingStatus, setUpdatingStatus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
   const SECRET_PASS = 'Animal@123';
@@ -103,6 +105,36 @@ const PaymentTransactions = () => {
       newExpandedRows.add(id);
     }
     setExpandedRows(newExpandedRows);
+  };
+
+  const handleStatusChange = async (paymentId: string, newStatus: string) => {
+    try {
+      setUpdatingStatus(prev => ({ ...prev, [paymentId]: true }));
+      
+      const { success, error } = await updatePaymentStatus(
+        paymentId, 
+        newStatus as 'pending' | 'success' | 'failed'
+      );
+
+      if (success) {
+        // Update the local state to reflect the change
+        setTransactions(prev => 
+          prev.map(tx => 
+            tx.id === paymentId 
+              ? { ...tx, status: newStatus, error_message: newStatus === 'failed' ? 'Manually updated' : null }
+              : tx
+          )
+        );
+        toast.success(`Status updated to ${newStatus}`);
+      } else {
+        throw new Error(error || 'Failed to update status');
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      toast.error(`Failed to update status: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setUpdatingStatus(prev => ({ ...prev, [paymentId]: false }));
+    }
   };
 
   if (!isAuthenticated) {
@@ -222,7 +254,7 @@ const PaymentTransactions = () => {
                   </TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      tx.status === 'completed' 
+                      tx.status === 'success' 
                         ? 'bg-green-100 text-green-800' 
                         : tx.status === 'failed' 
                           ? 'bg-red-100 text-red-800' 
@@ -287,9 +319,9 @@ const PaymentTransactions = () => {
                             <div>${typeof tx.amount === 'number' ? tx.amount.toFixed(2) : '0.00'}</div>
                             
                             <div className="text-gray-500">Status:</div>
-                            <div>
+                            <div className="flex items-center space-x-2">
                               <span className={`px-2 py-1 text-xs rounded-full ${
-                                tx.status === 'completed' 
+                                tx.status === 'success' 
                                   ? 'bg-green-100 text-green-800' 
                                   : tx.status === 'failed' 
                                     ? 'bg-red-100 text-red-800' 
@@ -297,6 +329,24 @@ const PaymentTransactions = () => {
                               }`}>
                                 {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
                               </span>
+                              {updatingStatus[tx.id] ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Select
+                                  value={tx.status}
+                                  onValueChange={(value) => handleStatusChange(tx.id, value)}
+                                  disabled={updatingStatus[tx.id]}
+                                >
+                                  <SelectTrigger className="w-28 h-7 text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="success">Success</SelectItem>
+                                    <SelectItem value="failed">Failed</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
                             </div>
                             
                             {tx.error_message && (
